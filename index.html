@@ -1,59 +1,11 @@
 <html>
 <head>
   <script src="sjcl.js" type="text/javascript"></script>
+  <script src="pw2url.js" type="text/javascript"></script>
 </head>
-<body>
+<body onload="javascript:onload()">
   
   <p id="output"></p>
 
-  <script>
-
-  function getParam(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-    results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-  }
-
-  function showPassword() {
-    var data = {
-      "iv":getParam('iv'),
-      "v":1,
-      "iter":1000,
-      "ks":128,
-      "ts":64,
-      "mode":"ccm",
-      "adata":"",
-      "cipher":"aes",
-      "salt":getParam('salt'),
-      "ct":getParam('ct')
-    }
-    var masterPw = prompt("Masterpassword");
-    var pass = sjcl.decrypt(masterPw, JSON.stringify(data));
-    document.getElementById('output').innerHTML = pass;
-  }
-
-  function showUrl() {
-    var data = prompt("Password to encypt");
-    var masterPw = prompt("Masterpassword");
-    var enc = sjcl.encrypt(masterPw, data);
-    var obj = JSON.parse(enc);
-    var iv = encodeURIComponent(obj.iv);
-    var salt = encodeURIComponent(obj.salt);
-    var ct = encodeURIComponent(obj.ct);
-    document.getElementById('output').innerHTML = "http://amo60001/pwgen/?iv="+iv+"&salt="+salt+"&ct="+ct;
-  }
-
-  try {
-    if(getParam('iv') != "") {
-      showPassword();
-    } else {
-      showUrl();
-    }
-  } catch(e) {
-    alert(e);
-  }
-
-  </script>
 </body>
 </html>
